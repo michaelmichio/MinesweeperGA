@@ -12,14 +12,14 @@ public class Main {
         /**
          *
          * Example puzzle: (size = 5 x 5)
-         * 3 4 - - -
-         * - - - - 2
-         * 4 - 7 - 1
-         * - 7 - 6 -
-         * - 4 6 - -
+         * - - 4 4 4
+         * 2 - 4 - -
+         * - - 3 - 5
+         * - - - 3 -
+         * 3 - - - -
          *
          * String input: (length = 25)
-         * 34-------24-7-1-7-6--46--
+         * --4442-4----3-5---3-3----
          *
          */
         System.out.print("String puzzle (length must n*n): ");

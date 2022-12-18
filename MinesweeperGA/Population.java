@@ -6,6 +6,7 @@ public class Population {
 
         this.individuals = new Individual[populationSize];
 
+        // Initialize individuals
         for(int i = 0; i < this.individuals.length; i++) {
             this.individuals[i] = new Individual(strPuzzle);
         }

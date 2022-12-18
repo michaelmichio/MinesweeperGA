@@ -17,6 +17,7 @@ public class Individual {
         Random random = new Random();
 
         this.genes = new int[strPuzzle.length()];
+        // Set genes randomly for each individual
         for(int i = 0; i < this.genes.length; i++) {
             this.genes[i] = Math.abs(random.nextInt() % 2);
         }
@@ -28,6 +29,7 @@ public class Individual {
     }
 
     public void setPuzzle() {
+        // Set puzzle array for fitness calculation needs
         this.puzzles = new int[this.size][this.size];
         for(int i = 0; i < this.puzzles.length; i++) {
             for(int j = 0; j < this.puzzles[0].length; j++) {
@@ -42,6 +44,7 @@ public class Individual {
     }
 
     public void setSolution() {
+        // Set solution array for fitness calculation needs
         this.solutions = new int[this.size][this.size];
         for(int i = 0; i < this.solutions.length; i++) {
             for(int j = 0; j < this.solutions[0].length; j++) {
@@ -51,6 +54,7 @@ public class Individual {
     }
 
     public void calculateFitness() {
+        // Calculate fitness
         double totalRate = 0.0;
         for(int i = 0 ; i < this.size; i++) {
             for(int j = 0; j < this.size; j++) {
@@ -58,65 +62,66 @@ public class Individual {
                     double currentRate = 0.0;
                     int neighbourCount = 0;
                     try {
-                        if(solutions[i-1][j-1] == 1) {
+                        if(this.solutions[i-1][j-1] == 1) { // top left
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i-1][j] == 1) {
+                        if(this.solutions[i-1][j] == 1) { // top
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i+1][j] == 1) {
+                        if(this.solutions[i-1][j+1] == 1) { // top right
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i][j-1] == 1) {
+                        if(this.solutions[i][j-1] == 1) { // left
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i][j] == 1) {
+                        if(this.solutions[i][j] == 1) { // center
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i][j+1] == 1) {
+                        if(this.solutions[i][j+1] == 1) { // right
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i+1][j-1] == 1) {
+                        if(this.solutions[i+1][j-1] == 1) { // bottom left
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i+1][j] == 1) {
+                        if(this.solutions[i+1][j] == 1) { // bottom
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
                     try {
-                        if(solutions[i+1][j+1] == 1) {
+                        if(this.solutions[i+1][j+1] == 1) { // bottom right
                             neighbourCount++;
                         }
                     } catch (Exception e) {}
 
-                    if(puzzles[i][j] == neighbourCount) {
+                    if(this.puzzles[i][j] == neighbourCount) {
                         currentRate = 1.0;
                     }
-                    else if(puzzles[i][j] > neighbourCount) {
+                    else if(this.puzzles[i][j] > neighbourCount) {
                         currentRate = (neighbourCount + 1.0) / (puzzles[i][j] + 1.0);
                     }
-                    else if(puzzles[i][j] < neighbourCount) {
-                        currentRate = (puzzles[i][j] + 1.0) / (neighbourCount + 1.0);
+                    else if(this.puzzles[i][j] < neighbourCount) {
+                        currentRate = (this.puzzles[i][j] + 1.0) / (neighbourCount + 1.0);
                     }
                     totalRate += currentRate;
                 }
             }
         }
-        totalRate = totalRate / numberCount;
+        System.out.println(totalRate + " / " + (numberCount*1.0) + " = " + totalRate);
+        totalRate = totalRate / (numberCount * 1.0);
         this.fitness = (int) (totalRate * 100);
     }
 

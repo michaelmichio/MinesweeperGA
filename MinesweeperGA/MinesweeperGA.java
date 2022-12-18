@@ -16,6 +16,8 @@ public class MinesweeperGA {
     public Individual secondFittest;
 
     public Individual bestFit;
+    public int bestFitGeneration;
+
 
     public MinesweeperGA(int generationCount, int populationSize, double crossoverRate, double mutationRate, double elitismRate) {
         this.generationCount = generationCount;
@@ -27,68 +29,76 @@ public class MinesweeperGA {
 
     public void generate(String strPuzzle) {
         this.strPuzzle = strPuzzle;
-        int i = 0;
+        int i = 1;
+
+        // Initialize population
         this.population = new Population(populationSize, this.strPuzzle);
+
+        // Calculate fitness of each individual
         this.population.calculateFitness();
+
+        // Store best fitness
         this.bestFit = this.population.getFittest();
-        System.out.println("Generation: " + i + " Fittest: " + this.population.fittest);
-        while(this.population.fittest <= 100 && i < this.generationCount) {
+        System.out.println("Generation: " + i + " Fittest: " + this.population.fittest + "%");
+
+        while(this.bestFit.fitness < 100 && i < this.generationCount) {
             i++;
 
+            // Do selection
             this.selection();
+            // Do crossover
             this.crossover();
+            // Do mutation
             this.mutation();
+            // Do elitism
             this.elitism();
 
+            // Calculate new fitness value
             this.population.calculateFitness();
 
+            // Update best fitness
             if(this.bestFit.fitness < this.fittest.fitness) {
                 this.bestFit = this.fittest;
+                this.bestFitGeneration = i;
             }
 
-            System.out.println("Generation: " + i + " Fittest: " + this.population.fittest);
-
-//            System.out.println("Generation: " + i + " Fittest: " + this.population.fittest + "%");
-//            for(int j = 0; j < this.population.getFittest().solutions.length; j++) {
-//                for(int k = 0; k < this.population.getFittest().solutions[0].length; k++) {
-//                    System.out.print(this.population.getFittest().solutions[j][k]);
-//                }
-//                System.out.println();
-//            }
+            System.out.println("Generation: " + i + " Fittest: " + this.population.fittest + "%");
         }
 
-        System.out.println("Solution found in generation " + i);
+        System.out.println("Solution found in generation " + this.bestFitGeneration);
         this.printResult();
     }
 
     public void selection() {
+        // Select the fittest individual
         this.fittest = this.population.getFittest();
+        // Select the second most fit individual
         this.secondFittest = this.population.getSecondFittest();
     }
 
     public void crossover() {
+        // Do crossover with probability
         Random random = new Random();
         int number = random.nextInt(100);
 
         if(number <= (int) (this.crossoverRate * 100)) {
-//            int crossOverPoint = random.nextInt(this.population.individuals[0].genes.length);
-//
-//            for (int i = 0; i < crossOverPoint; i++) {
-//                int temp = this.fittest.genes[i];
-//                this.fittest.genes[i] = this.secondFittest.genes[i];
-//                this.secondFittest.genes[i] = temp;
-//            }
             int length1 = this.fittest.genes.length / 2;
             int[] temp1 = new int[this.fittest.genes.length];
             int[] temp2 = new int[this.fittest.genes.length];
+            // divide chromosome into 2 parts, left part and right part
             for(int i = 0; i < length1; i++) {
+                // fill left temp1 chromosome with left fittest chromosome
                 temp1[i] = this.fittest.genes[i];
+                // fill left temp2 chromosome with left secondFittest chromosome
                 temp2[i] = this.secondFittest.genes[i];
             }
             for(int i = length1; i < this.fittest.genes.length; i++) {
+                // fill right temp1 chromosome with right secondFittest chromosome
                 temp1[i] = this.secondFittest.genes[i];
+                // fill right temp2 chromosome with right fittest chromosome
                 temp2[i] = this.fittest.genes[i];
             }
+            // replace old chromosome with temp
             for(int i = length1; i < this.fittest.genes.length; i++) {
                 this.fittest.genes[i] = temp1[i];
                 this.secondFittest.genes[i] = temp2[i];
@@ -97,12 +107,15 @@ public class MinesweeperGA {
     }
 
     public void mutation() {
+        // Do mutation with probability
         Random random = new Random();
         int number = random.nextInt(100);
 
         if(number <= (int) (this.mutationRate * 100)) {
+            // Select a random mutation point
             int mutationPoint = random.nextInt(this.population.individuals[0].genes.length);
 
+            // Flip values at the mutation point
             if (this.fittest.genes[mutationPoint] == 0) {
                 this.fittest.genes[mutationPoint] = 1;
             }
@@ -122,13 +135,16 @@ public class MinesweeperGA {
     }
 
     public void elitism() {
+        // Do elitism with probability
         Random random = new Random();
         int number = random.nextInt(100);
 
         if(number <= (int) (this.elitismRate * 100)) {
+            // Set the fittest individual to new population
             this.addFittestOffspring();
         }
         else {
+            // Replace all individual on population to new random individual
             for(int i = 0; i < this.population.individuals.length; i++) {
                 this.population.individuals[i] = new Individual(this.strPuzzle);
             }
@@ -136,6 +152,7 @@ public class MinesweeperGA {
     }
 
     public Individual getFittestOffspring() {
+        // Get fittest offspring
         if(this.fittest.fitness > this.secondFittest.fitness) {
             return fittest;
         }
@@ -143,14 +160,18 @@ public class MinesweeperGA {
     }
 
     public void addFittestOffspring() {
+        // Update fitness values of offspring
         this.fittest.calculateFitness();
         this.secondFittest.calculateFitness();
 
+        // Get index of the least fit individual
         int leastFittestIndex = this.population.getLeastFittestIndex();
 
+        // Replace least fittest individual from most fittest offspring
         this.population.individuals[leastFittestIndex] = getFittestOffspring();
 
         for(int i = 0; i < this.population.individuals.length; i++) {
+            // Replace every individual on population except the fittest
             if(i != leastFittestIndex) {
                 this.population.individuals[i] = new Individual(this.strPuzzle);
             }
@@ -158,6 +179,7 @@ public class MinesweeperGA {
     }
 
     public void printResult() {
+        // Print the best result
         System.out.println("Fitness " + this.bestFit.fitness + "%");
         System.out.println("Solution: ");
 
