@@ -99,7 +99,7 @@ public class MinesweeperGA {
                 temp2[i] = this.fittest.genes[i];
             }
             // replace old chromosome with temp
-            for(int i = length1; i < this.fittest.genes.length; i++) {
+            for(int i = 0; i < this.fittest.genes.length; i++) {
                 this.fittest.genes[i] = temp1[i];
                 this.secondFittest.genes[i] = temp2[i];
             }
